@@ -6,5 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class ThemeColor extends Model
 {
-    //
+    protected $fillable = [
+        'name',
+        'key',
+        'hex',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
 }

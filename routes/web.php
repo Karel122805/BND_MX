@@ -1,60 +1,119 @@
 <?php
 
+use App\Models\AboutSection;
 use App\Models\Authority;
 use App\Models\ContactMessage;
+use App\Models\ContactSetting;
 use App\Models\Document;
-use App\Models\PageContent;
-use App\Models\ResearchLine;
+use App\Models\GalleryItem;
+use App\Models\HomeSection;
+use App\Models\ResearchSection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    $contents = PageContent::where('page_key', 'inicio')
+    $sections = HomeSection::query()
+        ->with([
+            'backgroundMediaAsset',
+
+            'textColor',
+            'accentColor',
+            'tertiaryColor',
+
+            'titlePart1Color',
+            'titlePart2Color',
+            'titlePart3Color',
+
+            'subtitleTextColor',
+            'subtitleBorderColor',
+            'subtitleBackgroundColor',
+
+            'stat1Color',
+            'stat2Color',
+            'stat3Color',
+            'stat4Color',
+
+            'primaryButtonColor',
+            'primaryButtonTextColor',
+            'primaryButtonHoverColor',
+            'primaryButtonHoverTextColor',
+            'primaryButtonIconColor',
+            'primaryButtonHoverIconColor',
+
+            'secondaryButtonColor',
+            'secondaryButtonTextColor',
+            'secondaryButtonHoverColor',
+            'secondaryButtonHoverTextColor',
+            'secondaryButtonIconColor',
+            'secondaryButtonHoverIconColor',
+        ])
         ->where('is_active', true)
         ->orderBy('sort_order')
+        ->orderBy('id')
         ->get();
 
-    return view('public.home', compact('contents'));
+    return view('public.home', [
+        'sections' => $sections,
+    ]);
 })->name('home');
 
 Route::get('/nosotros', function () {
-    $contents = PageContent::where('page_key', 'nosotros')
-        ->where('is_active', true)
-        ->orderBy('sort_order')
+    $sections = AboutSection::query()
+        ->orderBy('id')
         ->get();
 
-    return view('public.about', compact('contents'));
+    return view('public.about', [
+        'sections' => $sections,
+    ]);
 })->name('about');
 
 Route::get('/autoridades', function () {
-    $authorities = Authority::where('is_active', true)
-        ->orderBy('sort_order')
-        ->orderBy('name')
+    $authorities = Authority::query()
+        ->orderBy('id')
         ->get();
 
-    return view('public.authorities', compact('authorities'));
+    return view('public.authorities', [
+        'authorities' => $authorities,
+    ]);
 })->name('authorities');
 
-Route::get('/documentos', function () {
-    $documents = Document::where('is_active', true)
-        ->orderByDesc('published_at')
-        ->orderBy('title')
+Route::get('/galeria', function () {
+    $items = GalleryItem::query()
+        ->orderBy('id')
         ->get();
 
-    return view('public.documents', compact('documents'));
-})->name('documents');
+    return view('public.gallery', [
+        'items' => $items,
+    ]);
+})->name('gallery');
 
 Route::get('/investigacion', function () {
-    $researchLines = ResearchLine::where('is_active', true)
-        ->orderBy('sort_order')
-        ->orderBy('title')
+    $sections = ResearchSection::query()
+        ->orderBy('id')
         ->get();
 
-    return view('public.research', compact('researchLines'));
+    return view('public.research', [
+        'sections' => $sections,
+    ]);
 })->name('research');
 
+Route::get('/documentos', function () {
+    $documents = Document::query()
+        ->orderBy('id')
+        ->get();
+
+    return view('public.documents', [
+        'documents' => $documents,
+    ]);
+})->name('documents');
+
 Route::get('/contacto', function () {
-    return view('public.contact');
+    $setting = ContactSetting::query()
+        ->first();
+
+    return view('public.contact', [
+        'setting' => $setting,
+    ]);
 })->name('contact');
 
 Route::post('/contacto', function (Request $request) {
