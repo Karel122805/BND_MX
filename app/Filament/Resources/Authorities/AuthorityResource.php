@@ -13,14 +13,25 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class AuthorityResource extends Resource
 {
     protected static ?string $model = Authority::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    protected static string | \UnitEnum | null $navigationGroup = 'Autoridades';
+
+    protected static ?string $navigationLabel = 'Autoridades';
+
+    protected static ?string $modelLabel = 'autoridad';
+
+    protected static ?string $pluralModelLabel = 'autoridades';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {
@@ -46,5 +57,30 @@ class AuthorityResource extends Resource
             'create' => CreateAuthority::route('/create'),
             'edit' => EditAuthority::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->canManagePublicContent() ?? false;
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->canManagePublicContent() ?? false;
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()?->canManagePublicContent() ?? false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->canManagePublicContent() ?? false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->canManagePublicContent() ?? false;
     }
 }
